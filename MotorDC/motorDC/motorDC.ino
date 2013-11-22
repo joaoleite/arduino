@@ -5,15 +5,19 @@ int motor1Pin2 = 9; //Motor Tracao
 int motor2Pin1 = 10; //Motor Roda
 int motor2Pin2 = 11; //Motor Roda
 
+int tempoInatividade = 200; // 
+
 SoftwareSerial mySerial(2, 3); // RX, TX
 
-int motorA[] = {9,6};
-int motorB[] = {11,10};
-int delayTime = 50;
+int motorA[] = { motor1Pin2 , motor1Pin1 };
+int motorB[] = { motor2Pin2 , motor2Pin1 };
+int delayTime = 0;
 
 char c;
 
-int countadorInatividade = 0;
+
+unsigned long lastTimeCommand;
+
 
 
 void moveUp(int motor[])
@@ -38,35 +42,6 @@ void offAll(){
 
 }
 
-
-void setupInicial() 
-{
-
-  mySerial.println("PIN 1 H L ");
-  digitalWrite(motor1Pin1,HIGH);
-  digitalWrite(motor1Pin2,LOW);
-  delay(2000);
-  mySerial.println("PIN 1 L H ");
-  digitalWrite(motor1Pin1,LOW);
-  digitalWrite(motor1Pin2,HIGH);
-  delay(2000);
-  mySerial.println("PIN 1 L L ");
-  digitalWrite(motor1Pin1,LOW);
-  digitalWrite(motor1Pin2,LOW);
-
-  mySerial.println("PIN 2 H L ");
-  digitalWrite(motor2Pin1,HIGH);
-  digitalWrite(motor2Pin2,LOW);
-  delay(2000);
-  mySerial.println("PIN 2 L H ");
-  digitalWrite(motor2Pin1,LOW);
-  digitalWrite(motor2Pin2,HIGH);
-  delay(2000);
-  mySerial.println("PIN 2 L L ");
-  digitalWrite(motor2Pin1,LOW);
-  digitalWrite(motor2Pin2,LOW);  
-}
-
 void setup() {
 
   mySerial.begin(9600);
@@ -74,9 +49,11 @@ void setup() {
   pinMode(motor1Pin2,OUTPUT);
   pinMode(motor2Pin1,OUTPUT);
   pinMode(motor2Pin2,OUTPUT);
+
 }
 
 void loop() {
+  
   if (mySerial.available() > 0) 
   {
     mySerial.println("Reading...");    
@@ -98,23 +75,17 @@ void loop() {
     {
       moveDown(motorB);
     }
-    else
+    else if (c == 'x' || c == 'x')   // X - Stop
     {
-      mySerial.println("No command found");
-      mySerial.println(c);
       offAll();
     }
-    countadorInatividade = 0;
+    lastTimeCommand = millis();
   }
-  else
-  {
-    countadorInatividade++;
-    if (countadorInatividade>150)
-    {
-      mySerial.println("No Serial Input");
-      offAll();
-      countadorInatividade = 0;
-    }
-    delay(1);
+  
+  if(millis() >= (lastTimeCommand + tempoInatividade)){ 
+    mySerial.println("Inative... turn off");
+    offAll();    
+    lastTimeCommand = millis();
   }
+  
 }
