@@ -49,6 +49,12 @@ void setup() {
   pinMode(motor1Pin2,OUTPUT);
   pinMode(motor2Pin1,OUTPUT);
   pinMode(motor2Pin2,OUTPUT);
+  
+  pinMode(4,OUTPUT);
+  pinMode(5,OUTPUT);
+  
+  analogWrite(4, 255);
+  analogWrite(5, 255);
 
 }
 
