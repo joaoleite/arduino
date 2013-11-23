@@ -15,30 +15,35 @@ int delayTime = 0;
 
 char c;
 
+int velocidade = 5;
+int vel_atual = 0;
+
 
 unsigned long lastTimeCommand;
 
 
 
 void moveUp(int motor[])
-{ 
-  digitalWrite(motor[0],HIGH);
-  digitalWrite(motor[1],LOW);
+{  
+  vel_atual = map(velocidade, 0, 10, 0, 255);
+  analogWrite(motor[0],vel_atual);
+  analogWrite(motor[1],0);
   delay(delayTime);
 }
 
 void moveDown(int motor[])
 { 
-  digitalWrite(motor[0],LOW);
-  digitalWrite(motor[1],HIGH);
+ vel_atual = map(velocidade, 0, 10, 0, 255);
+  analogWrite(motor[0],0);
+  analogWrite(motor[1],vel_atual);
   delay(delayTime);
 }
 
 void offAll(){
-  digitalWrite(motorA[0],LOW);
-  digitalWrite(motorA[1],LOW);
-  digitalWrite(motorB[0],LOW);
-  digitalWrite(motorB[1],LOW);
+  analogWrite(motorA[0],0);
+  analogWrite(motorA[1],0);
+  analogWrite(motorB[0],0);
+  analogWrite(motorB[1],0);
 
 }
 
@@ -50,12 +55,11 @@ void setup() {
   pinMode(motor2Pin1,OUTPUT);
   pinMode(motor2Pin2,OUTPUT);
   
+  offAll();
+  
   pinMode(4,OUTPUT);
   pinMode(5,OUTPUT);
   
-  analogWrite(4, 255);
-  analogWrite(5, 255);
-
 }
 
 void loop() {
@@ -65,23 +69,144 @@ void loop() {
     mySerial.println("Reading...");    
     c=mySerial.read();
     mySerial.println(String(c));
-    if (c == 'W' || c == 'w')
+    if (c == 'F' || c == 'f')
     {
       moveUp(motorA);
     }
-    else if (c == 'S' || c == 's')
+    else if (c == 'B' || c == 'b')
     {
       moveDown(motorA);
     }
-    else if (c == 'D' || c == 'd')
+    else if (c == 'R' || c == 'r')
     {
       moveUp(motorB);
     }
-    else if (c == 'A' || c == 'a')
+    else if (c == 'L' || c == 'l')
     {
       moveDown(motorB);
     }
-    else if (c == 'x' || c == 'x')   // X - Stop
+    else if (c == 'G' || c == 'g')
+    {
+      moveUp(motorA);
+      moveDown(motorB);    
+    }
+    else if (c == 'I' || c == 'i')
+    {
+      moveUp(motorA);
+      moveUp(motorB);
+    }
+    else if (c == 'H' || c == 'h')
+    {
+      moveDown(motorA);
+      moveDown(motorB);    
+    }
+    else if (c == 'J' || c == 'j')
+    {
+      moveDown(motorA);
+      moveUp(motorB);
+    }
+    else if (c == 'W')
+    {
+      // light front ON
+      digitalWrite(4,HIGH);
+    }
+    else if (c == 'w')
+    {
+      // light front OFF
+      digitalWrite(4, LOW);
+    }
+    
+    else if (c == 'U')
+    {
+      // light back ON
+      digitalWrite(5, HIGH);
+    }
+    else if (c == 'u')
+    {
+      // light back OFF
+      digitalWrite(5, LOW);
+    }    
+    
+    else if (c == 'V')
+    {
+      // Horn ON
+      c == '1';
+    }
+    else if (c == 'v')
+    {
+      // Horn Off
+      c == '1';
+    }    
+    
+        
+    else if (c == 'X')
+    {
+      // Extra ON
+      c == '1';
+    }
+    else if (c == 'x')
+    {
+      // Extra off
+      c == '1';
+    }        
+    
+    else if (c == '0')
+    {
+      // Velocidade
+      velocidade = 0;
+    }           
+    else if (c == '1')
+    {
+      // Velocidade 
+      velocidade = 1;
+    }        
+    else if (c == '2')
+    {
+      // Velocidade
+      velocidade = 2;
+    }           
+    else if (c == '3')
+    {
+      // Velocidade 
+      velocidade = 3;
+    }        
+    else if (c == '4')
+    {
+      // Velocidade
+      velocidade = 4;
+    }           
+    else if (c == '5')
+    {
+      // Velocidade 
+      velocidade = 5;
+    }        
+    else if (c == '6')
+    {
+      // Velocidade
+      velocidade = 6;
+    }           
+    else if (c == '7')
+    {
+      // Velocidade 
+      velocidade = 7;
+    }        
+    else if (c == '8')
+    {
+      // Velocidade
+      velocidade = 8;
+    }           
+    else if (c == '9')
+    {
+      // Velocidade 
+      velocidade = 9;
+    }        
+    else if (c == 'q')
+    {
+      // Velocidade MAX
+      velocidade = 10;
+    }  
+
+    else if (c == 'S')   // Stop
     {
       offAll();
     }
@@ -90,7 +215,7 @@ void loop() {
   
   if(millis() >= (lastTimeCommand + tempoInatividade)){ 
     mySerial.println("Inative... turn off");
-    offAll();    
+    //offAll();    
     lastTimeCommand = millis();
   }
   
