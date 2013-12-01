@@ -13,6 +13,9 @@
 #define MIN_ROLL 1048
 #define MAX_ROLL 1880
 
+#define PIN_LED_CHASSI 4
+#define PIN_LED_FAROL 5
+
 
 class Motor{
   public:
@@ -60,6 +63,9 @@ void setup(){
   Serial.begin(9600);
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
+  
+  pinMode(PIN_LED_CHASSI, OUTPUT);
+  pinMode(PIN_LED_FAROL, OUTPUT);
   tracao.off();
   direcao.off();
 }
@@ -75,8 +81,16 @@ void loop(){
   //Serial.print("roll="); Serial.println(direction);
 
   
-  Serial.print("ch=5 "); Serial.println(pulseIn(PIN_CH_5, 20000));
-  Serial.print("ch=6 "); Serial.println(pulseIn(PIN_CH_6, 20000));
+  //Serial.print("ch=5 "); Serial.println(pulseIn(PIN_CH_5, 20000));
+  //
+
+
+  int led_farol = pulseIn(PIN_CH_6, 20000);
+  if (led_farol > 1600){
+    digitalWrite(PIN_LED_FAROL, HIGH);
+  }else{
+    digitalWrite(PIN_LED_FAROL, LOW);
+  }
 
   tracao.write(thr);
   direcao.write(direction);
