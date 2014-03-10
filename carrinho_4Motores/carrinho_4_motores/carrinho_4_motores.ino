@@ -59,17 +59,45 @@ void setup(){
 }
 
 void loop(){
-  int raw_esquerda = constrain(pulseIn(PIN_ESQUERDA, 20000), MIN_THR, MAX_THR);
-  int raw_direita = constrain(pulseIn(PIN_DIREITA, 20000), MIN_ROLL, MAX_ROLL);
+  int raw_esquerda = constrain(pulseIn(PIN_DIREITA, 20000), MIN_THR, MAX_THR);
+  int raw_direita = constrain(pulseIn(PIN_ESQUERDA, 20000), MIN_ROLL, MAX_ROLL);
 
-  int val_esquerda = map(raw_esquerda, MIN_THR, MAX_THR, -255, 255);
-  int val_direita = map(raw_direita, MIN_ROLL, MAX_ROLL, -255, 255);
-
+  int val_velocidade = map(raw_esquerda, MIN_THR, MAX_THR, -100, 100);
+  
+  int val_direcao = map(raw_direita, MIN_ROLL, MAX_ROLL, -100, 100);
+ 
+  int val_esquerda = 2.55 * val_velocidade;
+  int val_direita = 2.55 * val_velocidade;
+  float resta = 0;
+  
+  if (abs(val_velocidade) >= 20)
+  {
+    if (val_direcao > 60){ //direita 
+      Serial.println("====> DIREITAAAAAAAAAA");
+      resta = (100.0 - abs(val_direcao));
+      val_esquerda = val_esquerda * resta/100;   
+      
+    }
+    else if (val_direcao < -60)// esquerda
+    {
+      Serial.println("====> ESQUERDAaaaaaaaa");
+      resta = (100.0 - abs(val_direcao));
+      val_direita = val_direita * resta/100;
+    }
+  }  
+  
+  Serial.print("resta="); Serial.println(resta);
+  Serial.print("val_velocidade="); Serial.println(val_velocidade);  
+  Serial.print("val_direcao="); Serial.println(val_direcao);  
   Serial.print("val_esquerda="); Serial.println(val_esquerda);
   Serial.print("val_direita="); Serial.println(val_direita);
-
+  Serial.println("---------------------------------");
+  
+  
   esquerda.write(val_esquerda);
   direita.write(val_direita);
+  
 
+  //delay(1000);
 }
 
